@@ -80,6 +80,9 @@ namespace dxvk {
     m_cmd = cmdList;
     m_cmd->init();
 
+    // Bind-skip: new command list — GPU pipeline state unknown
+    m_lastBoundGraphicsPipeline = VK_NULL_HANDLE;
+
     this->beginCurrentCommands();
   }
   
@@ -143,6 +146,9 @@ namespace dxvk {
   void DxvkContext::flushCommandList(
     const VkDebugUtilsLabelEXT*       reason,
           DxvkSubmitStatus*           status) {
+    // Bind-skip: submission boundary — pipeline state no longer valid
+    m_lastBoundGraphicsPipeline = VK_NULL_HANDLE;
+
     // Flush pending descriptor updates and assign the sync
     // point to the submission
     if (m_features.test(DxvkContextFeature::DescriptorBuffer))
@@ -5524,6 +5530,9 @@ namespace dxvk {
       flushBarriers();
       flushResolves();
 
+      // Bind-skip: render pass spill invalidates command buffer context
+      m_lastBoundGraphicsPipeline = VK_NULL_HANDLE;
+
       // Need to process pending clears after resolves
       preparePostRenderPassClears();
 
@@ -6045,6 +6054,9 @@ namespace dxvk {
 
     m_flags.clr(DxvkContextFlag::GpHasPushData);
 
+    // Bind-skip: pipeline object is no longer valid
+    m_lastBoundGraphicsPipeline = VK_NULL_HANDLE;
+
     m_state.gp.pipeline = nullptr;
   }
   
@@ -6117,8 +6129,16 @@ namespace dxvk {
     if (unlikely(!pipelineInfo.handle))
       return false;
 
-    m_cmd->cmdBindPipeline(DxvkCmdBuffer::ExecBuffer,
-      VK_PIPELINE_BIND_POINT_GRAPHICS, pipelineInfo.handle);
+    // Bind-skip: suppress vkCmdBindPipeline when handle is identical
+    // to the last bound handle and no pipeline state is dirty.
+    // Per Vulkan spec, re-binding an already-bound pipeline is a no-op
+    // at the API level but still incurs driver submission overhead.
+    if (pipelineInfo.handle != m_lastBoundGraphicsPipeline
+     || m_flags.test(DxvkContextFlag::GpDirtyPipelineState)) {
+      m_cmd->cmdBindPipeline(DxvkCmdBuffer::ExecBuffer,
+        VK_PIPELINE_BIND_POINT_GRAPHICS, pipelineInfo.handle);
+      m_lastBoundGraphicsPipeline = pipelineInfo.handle;
+    }
 
     // Update attachment usage info based on the pipeline state
     m_state.om.attachmentMask.merge(pipelineInfo.attachments);
