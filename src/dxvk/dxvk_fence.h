@@ -6,6 +6,7 @@
 #include <vector>
 
 #include "dxvk_include.h"
+#include "dxvk_adapter.h"
 
 #include "../util/thread.h"
 
@@ -66,6 +67,25 @@ namespace dxvk {
       return m_semaphore;
     }
 
+    
+    /**
+     * \brief D3DKMT sync object local handle
+     * \returns The sync object D3DKMT local handle
+     * \returns \c 0 if fence is not shared
+     */
+    D3DKMT_HANDLE kmtLocal() const {
+      return m_kmtLocal;
+    }
+
+    /**
+     * \brief D3DKMT sync object global handle
+     * \returns The sync object D3DKMT global handle
+     * \returns \c 0 if sync object is not shared or shared with NT handle
+     */
+    D3DKMT_HANDLE kmtGlobal() const {
+      return m_kmtGlobal;
+    }
+
     /**
      * \brief Retrieves current semaphore value
      * \returns Current semaphore value
@@ -118,6 +138,8 @@ namespace dxvk {
     Rc<vk::DeviceFn>                m_vkd;
     DxvkFenceCreateInfo             m_info;
     VkSemaphore                     m_semaphore;
+    D3DKMT_HANDLE                   m_kmtLocal = 0;
+    D3DKMT_HANDLE                   m_kmtGlobal = 0;
 
     std::priority_queue<QueueItem>  m_queue;
     bool                            m_running    = false;
@@ -127,6 +149,8 @@ namespace dxvk {
     dxvk::thread                    m_thread;
 
     void run();
+
+    void initKmtHandles();
 
   };
 

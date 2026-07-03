@@ -361,6 +361,8 @@ inline bool operator != (const RECT& a, const RECT& b) {
   return !(a == b);
 }
 
+// Missing in some versions of mingw headers
+#ifndef _MSC_VER
 inline bool operator == (const POINT& a, const POINT& b) {
   return a.x == b.x && a.y == b.y;
 }
@@ -368,6 +370,7 @@ inline bool operator == (const POINT& a, const POINT& b) {
 inline bool operator != (const POINT& a, const POINT& b) {
   return !(a == b);
 }
+#endif /* _MSC_VER */
 
 inline bool operator == (const D3DDISPLAYMODEEX& a, const D3DDISPLAYMODEEX& b) {
   return a.Size             == b.Size             &&
