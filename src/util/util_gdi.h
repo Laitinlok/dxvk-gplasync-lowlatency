@@ -5,6 +5,11 @@
 #include <d3d11_4.h>
 #include <d3d12.h>
 
+#ifndef _WIN32
+#define EXTERN_C
+#define WINBASEAPI
+#endif
+
 namespace dxvk {
   using NTSTATUS = LONG;
   using D3DDDIFORMAT = D3DFORMAT;
