@@ -36,9 +36,6 @@ namespace dxvk {
 
     determineShaderOptions();
 
-    if (env::getEnvVar("DXVK_SHADER_CACHE") != "0" && DxvkShader::getShaderDumpPath().empty())
-      m_shaderCache = DxvkShaderCache::getInstance();
-
     logBindingModel();
   }
   
