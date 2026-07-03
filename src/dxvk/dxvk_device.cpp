@@ -33,10 +33,6 @@ namespace dxvk {
       else
         m_kmtLocal = create.hDevice;
     }
-
-    determineShaderOptions();
-
-    logBindingModel();
   }
   
   
