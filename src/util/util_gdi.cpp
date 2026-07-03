@@ -3,7 +3,7 @@
 
 namespace dxvk {
 
-#ifdef _WIN32
+#ifndef _WIN32
   NTSTATUS WINAPI D3DKMTAcquireKeyedMutex(D3DKMT_ACQUIREKEYEDMUTEX *desc) {
     Logger::warn("D3DKMTAcquireKeyedMutex: Not available on this platform.");
     return -1;
