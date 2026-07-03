@@ -2573,26 +2573,6 @@ namespace dxvk {
     return feedback;
   }
 
-  DxvkShaderOptions D3D11Device::GetShaderOptions(
-    const Rc<DxvkDevice>&             Device,
-    const D3D11Options&               Options) {
-    auto result = Device->getShaderCompileOptions();
-
-    if (Options.disableMsaa)
-      result.flags.set(DxvkShaderCompileFlag::DisableMsaa);
-
-    if (Options.forceComputeLdsBarriers)
-      result.flags.set(DxvkShaderCompileFlag::InsertSharedMemoryBarriers);
-
-    if (Options.forceComputeUavBarriers)
-      result.flags.set(DxvkShaderCompileFlag::InsertResourceBarriers);
-
-    if (Options.forceSampleRateShading)
-      result.flags.set(DxvkShaderCompileFlag::EnableSampleRateShading);
-
-    return result;
-  }
-
   bool D3D11Device::ConvertRuntimeDescriptor(
        UINT                       size,
        const union d3dkmt_desc&   d3dkmt,
