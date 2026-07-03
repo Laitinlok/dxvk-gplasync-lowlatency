@@ -327,7 +327,7 @@ namespace dxvk {
       D3DKMT_HANDLE handles[] = {local, keyedMutex->kmtLocal(), keyedMutex->getSyncObject()->kmtLocal()};
       if (!D3DKMTShareObjects(3, handles, &attr, dwAccess, pHandle))
         return S_OK;
-    } else if (!D3DKMTShareObjects(1, &local, &attr, dwAccess, pHandle)) {)
+    } else if (!D3DKMTShareObjects(1, &local, &attr, dwAccess, pHandle)) {
       return S_OK;
     }
     /* try legacy Proton shared resource implementation */
