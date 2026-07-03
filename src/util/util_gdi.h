@@ -136,7 +136,7 @@ namespace dxvk {
  {
     HDC    hDC;
     HANDLE hBitmap;
-  } D3DKMT_DESTROYDCFROMMEMORY;;
+  } D3DKMT_DESTROYDCFROMMEMORY;
 
   typedef struct _D3DKMT_DESTROYDEVICE
   {
